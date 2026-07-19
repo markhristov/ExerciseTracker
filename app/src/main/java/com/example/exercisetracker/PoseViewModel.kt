@@ -8,12 +8,12 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-class PoseViewModel : ViewModel(){
-    private val  _uiState = MutableStateFlow(PoseUiState())
+class PoseViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
 
     fun toggleWorkout() {
-        if (_uiState.value.isRecording ){
+        if (_uiState.value.isRecording) {
             stopWorkout()
         } else {
             startWorkout()
