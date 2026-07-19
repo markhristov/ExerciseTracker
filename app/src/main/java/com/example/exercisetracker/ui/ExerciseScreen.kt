@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.exercisetracker.PoseUiState
 import com.example.exercisetracker.camera.CameraManager
 import com.example.exercisetracker.ui.theme.ExerciseTrackerTheme
 @Composable

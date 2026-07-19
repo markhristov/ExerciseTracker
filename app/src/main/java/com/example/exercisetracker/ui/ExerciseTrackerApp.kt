@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.exercisetracker.PoseViewModel
 
 @Composable
 fun ExerciseTrackerApp(
-    viewModel: PoseViewModel = viewModel()
+    viewModel: PoseViewModel = viewModel(factory = PoseViewModel.Factory)
 ) {
     val uiState = viewModel.uiState.collectAsState()
     Scaffold(topBar = {
@@ -24,6 +24,8 @@ fun ExerciseTrackerApp(
         ExerciseScreen(
             uiState = uiState.value,
             onStartClick = { viewModel.toggleWorkout() },
+            onCameraFrame = { viewModel.detectPoses(it) },
+
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp),

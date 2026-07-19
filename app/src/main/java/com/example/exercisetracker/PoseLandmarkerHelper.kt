@@ -14,6 +14,7 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import android.graphics.Matrix
 import android.util.Log
+import androidx.core.graphics.createBitmap
 
 
 class PoseLandmarkerHelper(
@@ -82,6 +83,8 @@ class PoseLandmarkerHelper(
                     .setMinPoseDetectionConfidence(minPoseDetectionConfidence)
                     .setMinTrackingConfidence(minPoseTrackingConfidence)
                     .setMinPosePresenceConfidence(minPosePresenceConfidence)
+                    .setResultListener(::returnLivestreamResult)
+                    .setErrorListener(::returnLivestreamError)
                     .setRunningMode(runningMode)
 
             val options = optionsBuilder.build()
@@ -118,9 +121,7 @@ class PoseLandmarkerHelper(
         val frameTime = SystemClock.uptimeMillis()
 
         // Copy out RGB bits from the frame to a bitmap buffer
-        val bitmapBuffer = Bitmap.createBitmap(
-            imageProxy.width, imageProxy.height, Bitmap.Config.ARGB_8888
-        )
+        val bitmapBuffer = createBitmap(imageProxy.width, imageProxy.height)
 
         imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
         imageProxy.close()
@@ -162,9 +163,7 @@ class PoseLandmarkerHelper(
         val inferenceTime = finishTimeMs - result.timestampMs()
 
         poseLandmarkerHelperListener?.onResults(
-            ResultBundle(
-                listOf(result), inferenceTime, input.height, input.width
-            )
+            result
         )
     }
 
@@ -192,16 +191,9 @@ class PoseLandmarkerHelper(
         const val MODEL_POSE_LANDMARKER_HEAVY = 2
     }
 
-    data class ResultBundle(
-        val results: List<PoseLandmarkerResult>,
-        val inferenceTime: Long,
-        val inputImageHeight: Int,
-        val inputImageWidth: Int,
-    )
-
     interface LandmarkerListener {
         fun onError(error: String, errorCode: Int = OTHER_ERROR)
-        fun onResults(resultBundle: ResultBundle)
+        fun onResults(result: PoseLandmarkerResult)
     }
 
 }
