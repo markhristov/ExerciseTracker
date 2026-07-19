@@ -11,6 +11,15 @@ import kotlinx.coroutines.flow.update
 class PoseViewModel : ViewModel(){
     private val  _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
+
+    fun toggleWorkout() {
+        if (_uiState.value.isRecording ){
+            stopWorkout()
+        } else {
+            startWorkout()
+        }
+    }
+
     fun startWorkout() {
         _uiState.update {
             it.copy(isRecording = true)
