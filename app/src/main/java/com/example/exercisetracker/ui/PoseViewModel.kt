@@ -8,13 +8,15 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
+import com.example.exercisetracker.exercise.DetectionDetails
+import com.example.exercisetracker.exercise.ExerciseDetector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 private const val TAG = "PoseViewModel"
 
 class PoseViewModel(
-    val poseLandmarkerHelper: PoseLandmarkerHelper, val poseDetector: PoseDetector
+    val poseLandmarkerHelper: PoseLandmarkerHelper, val poseDetector: ExerciseDetector
 ) : ViewModel(), PoseDetectionListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState

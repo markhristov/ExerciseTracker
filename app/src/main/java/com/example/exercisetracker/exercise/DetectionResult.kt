@@ -1,11 +1,11 @@
-package com.example.exercisetracker.ui
+package com.example.exercisetracker.exercise
 
-import com.example.exercisetracker.model.Stage
+import com.example.exercisetracker.exercise.pushup.PushUpState
 
 sealed interface DetectionResult
 
 data class DetectionDetails(
-    val stage: Stage,
+    val pushUpState: PushUpState,
     val elbowAngle: Double,
     val repCompleted: Boolean
 ) : DetectionResult

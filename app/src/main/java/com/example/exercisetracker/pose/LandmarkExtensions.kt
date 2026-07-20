@@ -1,4 +1,4 @@
-package com.example.exercisetracker.ui.extensions
+package com.example.exercisetracker.pose
 
 import com.example.exercisetracker.model.ArmsJoints
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark

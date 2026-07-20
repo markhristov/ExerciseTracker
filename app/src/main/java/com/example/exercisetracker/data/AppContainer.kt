@@ -2,7 +2,7 @@ package com.example.exercisetracker.data
 
 import android.content.Context
 import com.example.exercisetracker.PoseLandmarkerHelper
-import com.example.exercisetracker.ui.PoseDetector
+import com.example.exercisetracker.exercise.pushup.PoseDetector
 
 interface AppContainer {
     val poseLandmarkerHelper: PoseLandmarkerHelper
