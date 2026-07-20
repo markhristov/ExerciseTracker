@@ -6,7 +6,6 @@ import com.example.exercisetracker.model.Arm
 import com.example.exercisetracker.model.ArmsJoints
 import com.example.exercisetracker.model.Stage
 import com.example.exercisetracker.ui.extensions.toArmJoints
-import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlin.math.acos
 import kotlin.math.sqrt
