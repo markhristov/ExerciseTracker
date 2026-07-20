@@ -1,26 +1,28 @@
 package com.example.exercisetracker.pose
 
+import android.R.attr.visibility
 import android.util.Log
 import com.example.exercisetracker.model.Arm
-import com.example.exercisetracker.model.ArmsJoints
 import kotlin.math.acos
 import kotlin.math.sqrt
 
 private const val TAG = "PoseMath"
 
-fun getBestVisibleArm(joints: ArmsJoints, visibilityThreshold: Float = 0.7f): Arm? {
+fun getBestVisibleArm(bodyPose: BodyPose, visibilityThreshold: Float = 0.7f): Arm? {
+    val leftArm = bodyPose.leftArm
+    val rightArm = bodyPose.rightArm
+
     val leftVisibility = minOf(
-        joints.leftShoulder.visibility().orElse(0f),
-        joints.leftElbow.visibility().orElse(0f),
-        joints.leftWrist.visibility().orElse(0f)
+        leftArm.shoulder.visibility,
+        leftArm.elbow.visibility,
+        leftArm.wrist.visibility
     )
 
     val rightVisibility = minOf(
-        joints.rightShoulder.visibility().orElse(0f),
-        joints.rightElbow.visibility().orElse(0f),
-        joints.rightWrist.visibility().orElse(0f)
+        rightArm.shoulder.visibility,
+        rightArm.elbow.visibility,
+        rightArm.wrist.visibility
     )
-
     val bestVisibility = maxOf(leftVisibility, rightVisibility)
 
     if (bestVisibility < visibilityThreshold) {
@@ -29,31 +31,22 @@ fun getBestVisibleArm(joints: ArmsJoints, visibilityThreshold: Float = 0.7f): Ar
     }
 
     return if (leftVisibility >= rightVisibility) {
-        Arm(
-            shoulder = joints.leftShoulder,
-            elbow = joints.leftElbow,
-            wrist = joints.leftWrist
-        )
+        leftArm
     } else {
-        Arm(
-            shoulder = joints.rightShoulder,
-            elbow = joints.rightElbow,
-            wrist = joints.rightWrist
-        )
+        rightArm
     }
 }
 
 
 fun calculateElbowAngle(arm: Arm): Double {
+    val shoulderX = arm.shoulder.x.toDouble()
+    val shoulderY = arm.shoulder.y.toDouble()
 
-    val shoulderX = arm.shoulder.x().toDouble()
-    val shoulderY = arm.shoulder.y().toDouble()
+    val elbowX = arm.elbow.x.toDouble()
+    val elbowY = arm.elbow.y.toDouble()
 
-    val elbowX = arm.elbow.x().toDouble()
-    val elbowY = arm.elbow.y().toDouble()
-
-    val wristX = arm.wrist.x().toDouble()
-    val wristY = arm.wrist.y().toDouble()
+    val wristX = arm.wrist.x.toDouble()
+    val wristY = arm.wrist.y.toDouble()
 
     val v1x = shoulderX - elbowX
     val v1y = shoulderY - elbowY

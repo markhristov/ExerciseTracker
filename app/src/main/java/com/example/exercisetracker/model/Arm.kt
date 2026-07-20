@@ -1,9 +1,9 @@
 package com.example.exercisetracker.model
 
-import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
+import com.example.exercisetracker.pose.Joint
 
 data class Arm(
-    val shoulder: NormalizedLandmark,
-    val elbow: NormalizedLandmark,
-    val wrist: NormalizedLandmark
+    val shoulder: Joint,
+    val elbow: Joint,
+    val wrist: Joint
 )

@@ -8,6 +8,8 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.ImageProxy
 import androidx.core.graphics.createBitmap
+import com.example.exercisetracker.pose.BodyPose
+import com.example.exercisetracker.pose.toBodyPose
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -161,8 +163,13 @@ class PoseLandmarkerHelper(
         val finishTimeMs = SystemClock.uptimeMillis()
         val inferenceTime = finishTimeMs - result.timestampMs()
 
+        val bodyPose = result.landmarks()
+            .firstOrNull()
+            ?.toBodyPose()
+            ?: return
+
         poseLandmarkerHelperListener?.onResults(
-            result
+            bodyPose
         )
     }
 
@@ -192,7 +199,7 @@ class PoseLandmarkerHelper(
 
     interface LandmarkerListener {
         fun onError(error: String, errorCode: Int = OTHER_ERROR)
-        fun onResults(result: PoseLandmarkerResult)
+        fun onResults(bodyPose: BodyPose)
     }
 
 }

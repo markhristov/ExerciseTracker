@@ -2,21 +2,18 @@ package com.example.exercisetracker.exercise.pushup
 
 import android.util.Log
 import com.example.exercisetracker.PoseLandmarkerHelper.LandmarkerListener
-import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.DetectionDetails
 import com.example.exercisetracker.exercise.DetectionResult
+import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.NoVisibleArm
+import com.example.exercisetracker.pose.BodyPose
 import com.example.exercisetracker.pose.calculateElbowAngle
 import com.example.exercisetracker.pose.getBestVisibleArm
-import com.example.exercisetracker.pose.toArmJoints
 import com.example.exercisetracker.ui.PoseDetectionListener
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 private const val TAG = "PoseDetector"
 private const val UP_THRESHOLD = 160
 private const val DOWN_THRESHOLD = 90
-
-private const val VISIBILITY_THRESHOLD = 0.6
 
 class PoseDetector : LandmarkerListener, ExerciseDetector {
     override var listener: PoseDetectionListener? = null
@@ -25,19 +22,16 @@ class PoseDetector : LandmarkerListener, ExerciseDetector {
         Log.d(TAG, "An error: $error with code $errorCode occurred")
     }
 
-    override fun onResults(result: PoseLandmarkerResult) {
-        if (result.landmarks().isEmpty()) return
-        when (val outcome = process(result)) {
-            is DetectionDetails -> listener?.onDetection(outcome)
+    override fun onResults(bodyPose: BodyPose) {
+        when (val result = process(bodyPose)) {
+            is DetectionDetails -> listener?.onDetection(result)
             is NoVisibleArm -> {}
         }
     }
 
-    override fun process(result: PoseLandmarkerResult): DetectionResult {
-        val landmarks = result.landmarks().first()
-        Log.i(TAG, landmarks.toString())
-        val armJoints = landmarks.toArmJoints()
-        val arm = getBestVisibleArm(armJoints) ?: return NoVisibleArm
+    override fun process(bodyPose: BodyPose): DetectionResult {
+        Log.i(TAG, bodyPose.toString())
+        val arm = getBestVisibleArm(bodyPose) ?: return NoVisibleArm
         val elbowAngle = calculateElbowAngle(arm)
 
         val newPushUpState = when {
