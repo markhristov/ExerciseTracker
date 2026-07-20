@@ -23,7 +23,7 @@ fun ExerciseTrackerApp(
 
         ExerciseScreen(
             uiState = uiState.value,
-            onStartClick = { viewModel.toggleWorkout() },
+            onButtonClick = { viewModel.toggleWorkout() },
             onCameraFrame = { viewModel.detectPoses(it) },
 
             modifier = Modifier

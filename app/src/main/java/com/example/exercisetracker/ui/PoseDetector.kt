@@ -13,6 +13,8 @@ import kotlin.math.sqrt
 private const val TAG = "PoseDetector"
 private const val UP_THRESHOLD = 160
 private const val DOWN_THRESHOLD = 90
+
+private const val VISIBILITY_THRESHOLD = 0.6
 class PoseDetector : LandmarkerListener {
     var listener: PoseDetectionListener? = null
     private var currentStage = Stage.UP
@@ -22,50 +24,43 @@ class PoseDetector : LandmarkerListener {
 
     override fun onResults(result: PoseLandmarkerResult) {
         if (result.landmarks().isEmpty()) return
-        listener?.onDetection(process(result))
+        when (val outcome = process(result)) {
+            is DetectionDetails -> listener?.onDetection(outcome)
+            is NoVisibleArm -> {}
+        }
     }
-
 
     fun process(result: PoseLandmarkerResult): DetectionResult {
         val landmarks = result.landmarks().first()
         Log.i(TAG, landmarks.toString())
         val armJoints = landmarks.toArmJoints()
-        val arm = getBestVisibleArm(armJoints)
+        val arm = getBestVisibleArm(armJoints)  ?: return NoVisibleArm
         val elbowAngle = calculateElbowAngle(arm)
 
         val newStage = when {
             elbowAngle > UP_THRESHOLD -> Stage.UP
             elbowAngle < DOWN_THRESHOLD -> Stage.DOWN
-            else -> Stage.UP
+            else -> currentStage
         }
 
         var repCompleted = false
 
-        when (newStage) {
-            Stage.DOWN -> {
-                currentStage = Stage.DOWN
-            }
-
-            Stage.UP -> {
-                if (currentStage == Stage.DOWN) {
-                    repCompleted = true
-                }
-                currentStage = Stage.UP
-            }
+        if (currentStage == Stage.DOWN && newStage == Stage.UP) {
+            repCompleted = true
         }
 
         currentStage = newStage
 
         Log.d(TAG, "Angle = $elbowAngle")
         Log.d(TAG, "Stage = $newStage")
-        return DetectionResult(
+        return DetectionDetails(
             stage = newStage,
             elbowAngle = elbowAngle,
             repCompleted = repCompleted
         )
     }
 
-    fun getBestVisibleArm(joints: ArmsJoints): Arm {
+    fun getBestVisibleArm(joints: ArmsJoints): Arm? {
         val leftVisibility = minOf(
             joints.leftShoulder.visibility().orElse(0f),
             joints.leftElbow.visibility().orElse(0f),
@@ -77,6 +72,13 @@ class PoseDetector : LandmarkerListener {
             joints.rightElbow.visibility().orElse(0f),
             joints.rightWrist.visibility().orElse(0f)
         )
+
+        val bestVisibility = maxOf(leftVisibility, rightVisibility)
+
+        if (bestVisibility < VISIBILITY_THRESHOLD) {
+            Log.d(TAG, "Visibility ${bestVisibility * 100}%")
+            return null
+        }
 
         return if (leftVisibility >= rightVisibility) {
             Arm(

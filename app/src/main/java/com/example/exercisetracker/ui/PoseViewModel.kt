@@ -9,23 +9,18 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
-import com.example.exercisetracker.PoseLandmarkerHelper.LandmarkerListener
-import com.example.exercisetracker.model.Arm
-import com.example.exercisetracker.model.ArmsJoints
-import com.example.exercisetracker.model.Stage
-import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.math.acos
-import kotlin.math.sqrt
 
 
 private const val TAG = "PoseViewModel"
 
 
-class PoseViewModel(val poseLandmarkerHelper: PoseLandmarkerHelper,
-    val poseDetector: PoseDetector) : ViewModel(), PoseDetectionListener {
+class PoseViewModel(
+    val poseLandmarkerHelper: PoseLandmarkerHelper,
+    val poseDetector: PoseDetector
+) : ViewModel(), PoseDetectionListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
 
@@ -66,11 +61,7 @@ class PoseViewModel(val poseLandmarkerHelper: PoseLandmarkerHelper,
         }
     }
 
-    private fun onPoseDetected(result: PoseLandmarkerResult) {
-        Log.i(TAG, result.toString())
-    }
-
-    override fun onDetection(result: DetectionResult) {
+    override fun onDetection(result: DetectionDetails) {
         if (result.repCompleted) {
             onRepDetected()
         }
@@ -82,8 +73,10 @@ class PoseViewModel(val poseLandmarkerHelper: PoseLandmarkerHelper,
                 val application = (this[APPLICATION_KEY] as ExerciseTrackerApplication)
                 val poseLandmarkerHelper = application.container.poseLandmarkerHelper
                 val poseDetector = application.container.poseDetector
-                PoseViewModel(poseLandmarkerHelper = poseLandmarkerHelper,
-                    poseDetector = poseDetector)
+                PoseViewModel(
+                    poseLandmarkerHelper = poseLandmarkerHelper,
+                    poseDetector = poseDetector
+                )
             }
         }
     }

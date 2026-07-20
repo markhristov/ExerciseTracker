@@ -42,7 +42,6 @@ import com.example.exercisetracker.ui.theme.ExerciseTrackerTheme
 @Composable
 fun CameraPermissionGate(
     modifier: Modifier = Modifier,
-    onPermissionGranted: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -59,9 +58,6 @@ fun CameraPermissionGate(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasPermission = granted
-        if (granted) {
-            onPermissionGranted()
-        }
     }
 
     if (hasPermission) {
@@ -91,7 +87,7 @@ fun CameraPermissionGate(
 @Composable
 fun ExerciseScreen(
     uiState: PoseUiState,
-    onStartClick: () -> Unit,
+    onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     onCameraFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() }
 ) {
@@ -101,8 +97,8 @@ fun ExerciseScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.weight(1f)) { // TODO!
-            CameraPermissionGate(onPermissionGranted = onStartClick) {
+        Box(modifier = Modifier.weight(1f)) {
+            CameraPermissionGate {
                 CameraPreview(
                     enabled = uiState.isRecording,
                     onFrame = onCameraFrame,
@@ -118,9 +114,8 @@ fun ExerciseScreen(
         )
         Button(
             onClick = {
-                onStartClick()
-
-            }, modifier = Modifier.padding(16.dp)
+                onButtonClick()
+            }, modifier = Modifier.padding(bottom = 16.dp)
         ) {
             Text(
                 text = if (uiState.isRecording) "Stop" else "Start",
