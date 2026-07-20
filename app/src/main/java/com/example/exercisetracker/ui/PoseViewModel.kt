@@ -9,9 +9,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
-import com.example.exercisetracker.exercise.DetectionDetails
+import com.example.exercisetracker.exercise.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
-import com.example.exercisetracker.exercise.NoVisibleArm
+import com.example.exercisetracker.exercise.PushUpDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -69,17 +69,15 @@ class PoseViewModel(
 
     override fun onResults(bodyPose: BodyPose) {
         when (val result = poseDetector.process(bodyPose)) {
-            is DetectionDetails -> if (result.repCompleted) onRepDetected() else {
+            is PushUpDetectionResult -> if (result.repCompleted) onRepDetected() else {
             }
 
-            is NoVisibleArm -> {}
+            else -> {}
         }
     }
 
-    override fun onDetection(result: DetectionDetails) {
-        if (result.repCompleted) {
-            onRepDetected()
-        }
+    override fun onDetection(result: DetectionResult) {
+
     }
 
     companion object {

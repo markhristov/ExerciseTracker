@@ -1,13 +1,13 @@
 package com.example.exercisetracker.exercise.pushup
 
 import android.util.Log
-import com.example.exercisetracker.exercise.DetectionDetails
 import com.example.exercisetracker.exercise.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
-import com.example.exercisetracker.exercise.NoVisibleArm
+import com.example.exercisetracker.exercise.NoVisibleBodyPart
+import com.example.exercisetracker.exercise.PushUpDetectionResult
 import com.example.exercisetracker.pose.BodyPose
+import com.example.exercisetracker.pose.bestVisibleArm
 import com.example.exercisetracker.pose.calculateElbowAngle
-import com.example.exercisetracker.pose.getBestVisibleArm
 import com.example.exercisetracker.ui.PoseDetectionListener
 
 private const val TAG = "PoseDetector"
@@ -16,38 +16,38 @@ private const val DOWN_THRESHOLD = 90
 
 class PushUpDetector : ExerciseDetector {
     override var listener: PoseDetectionListener? = null
-    private var currentPushUpState = PushUpState.UP
+    private var currentState = PushUpState.UP
 
      fun onResults(bodyPose: BodyPose) {
         when (val result = process(bodyPose)) {
-            is DetectionDetails -> listener?.onDetection(result)
-            is NoVisibleArm -> {}
+            is PushUpDetectionResult -> listener?.onDetection(result)
+            else -> {}
         }
     }
 
     override fun process(bodyPose: BodyPose): DetectionResult {
         Log.i(TAG, bodyPose.toString())
-        val arm = getBestVisibleArm(bodyPose) ?: return NoVisibleArm
+        val arm = bodyPose.bestVisibleArm() ?: return NoVisibleBodyPart
         val elbowAngle = calculateElbowAngle(arm)
 
         val newPushUpState = when {
             elbowAngle > UP_THRESHOLD -> PushUpState.UP
             elbowAngle < DOWN_THRESHOLD -> PushUpState.DOWN
-            else -> currentPushUpState
+            else -> currentState
         }
 
         var repCompleted = false
 
-        if (currentPushUpState == PushUpState.DOWN && newPushUpState == PushUpState.UP) {
+        if (currentState == PushUpState.DOWN && newPushUpState == PushUpState.UP) {
             repCompleted = true
         }
 
-        currentPushUpState = newPushUpState
+        currentState = newPushUpState
 
         Log.d(TAG, "Angle = $elbowAngle")
         Log.d(TAG, "Stage = $newPushUpState")
-        return DetectionDetails(
-            pushUpState = newPushUpState,
+        return PushUpDetectionResult(
+            state = newPushUpState,
             elbowAngle = elbowAngle,
             repCompleted = repCompleted
         )

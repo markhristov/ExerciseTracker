@@ -1,6 +1,7 @@
 package com.example.exercisetracker.pose
 
 import com.example.exercisetracker.model.Arm
+import com.example.exercisetracker.model.Leg
 
 data class BodyPose(
 
@@ -29,6 +30,20 @@ data class BodyPose(
 
     val rightArm: Arm
         get() = Arm(rightShoulder, rightElbow, rightWrist)
+
+    val leftLeg
+        get() = Leg(
+            leftHip,
+            leftKnee,
+            leftAnkle
+        )
+
+    val rightLeg
+        get() = Leg(
+            rightHip,
+            rightKnee,
+            rightAnkle
+        )
 }
 
 data class Joint(

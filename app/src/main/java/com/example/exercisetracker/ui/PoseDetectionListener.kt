@@ -1,7 +1,7 @@
 package com.example.exercisetracker.ui
 
-import com.example.exercisetracker.exercise.DetectionDetails
+import com.example.exercisetracker.exercise.DetectionResult
 
 interface PoseDetectionListener {
-    fun onDetection(result: DetectionDetails)
+    fun onDetection(result: DetectionResult)
 }

@@ -1,43 +1,55 @@
 package com.example.exercisetracker.pose
 
-import android.R.attr.visibility
 import android.util.Log
 import com.example.exercisetracker.model.Arm
+import com.example.exercisetracker.model.Leg
+import kotlin.math.abs
 import kotlin.math.acos
+import kotlin.math.atan2
 import kotlin.math.sqrt
 
 private const val TAG = "PoseMath"
 
-fun getBestVisibleArm(bodyPose: BodyPose, visibilityThreshold: Float = 0.7f): Arm? {
-    val leftArm = bodyPose.leftArm
-    val rightArm = bodyPose.rightArm
 
-    val leftVisibility = minOf(
-        leftArm.shoulder.visibility,
-        leftArm.elbow.visibility,
-        leftArm.wrist.visibility
-    )
+fun Leg.isStanding(): Boolean =
+    calculateAngle(hip, knee, ankle) > 165
 
-    val rightVisibility = minOf(
-        rightArm.shoulder.visibility,
-        rightArm.elbow.visibility,
-        rightArm.wrist.visibility
-    )
-    val bestVisibility = maxOf(leftVisibility, rightVisibility)
+fun Leg.isSquatting(): Boolean =
+    calculateAngle(hip, knee, ankle) < 100
 
-    if (bestVisibility < visibilityThreshold) {
-        Log.d(TAG, "Visibility ${bestVisibility * 100}%")
-        return null
+fun calculateAngle(
+    first: Joint,
+    vertex: Joint,
+    third: Joint
+): Double {
+    val firstX = first.x.toDouble()
+    val firstY = first.y.toDouble()
+
+    val vertexX = vertex.x.toDouble()
+    val vertexY = vertex.y.toDouble()
+
+    val thirdX = third.x.toDouble()
+    val thirdY = third.y.toDouble()
+
+    val v1x = firstX - vertexX
+    val v1y = firstY - vertexY
+
+    val v2x = thirdX - vertexX
+    val v2y = thirdY - vertexY
+
+    val dot = v1x * v2x + v1y * v2y
+
+    val mag1 = sqrt(v1x * v1x + v1y * v1y)
+    val mag2 = sqrt(v2x * v2x + v2y * v2y)
+
+    if (mag1 == 0.0 || mag2 == 0.0) {
+        return Double.NaN
     }
 
-    return if (leftVisibility >= rightVisibility) {
-        leftArm
-    } else {
-        rightArm
-    }
+    val cosTheta = (dot / (mag1 * mag2)).coerceIn(-1.0, 1.0)
+
+    return Math.toDegrees(acos(cosTheta))
 }
-
-
 fun calculateElbowAngle(arm: Arm): Double {
     val shoulderX = arm.shoulder.x.toDouble()
     val shoulderY = arm.shoulder.y.toDouble()
