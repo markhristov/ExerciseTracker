@@ -1,7 +1,6 @@
 package com.example.exercisetracker.exercise.pushup
 
 import android.util.Log
-import com.example.exercisetracker.PoseLandmarkerHelper.LandmarkerListener
 import com.example.exercisetracker.exercise.DetectionDetails
 import com.example.exercisetracker.exercise.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
@@ -15,14 +14,11 @@ private const val TAG = "PoseDetector"
 private const val UP_THRESHOLD = 160
 private const val DOWN_THRESHOLD = 90
 
-class PoseDetector : LandmarkerListener, ExerciseDetector {
+class PushUpDetector : ExerciseDetector {
     override var listener: PoseDetectionListener? = null
     private var currentPushUpState = PushUpState.UP
-    override fun onError(error: String, errorCode: Int) {
-        Log.d(TAG, "An error: $error with code $errorCode occurred")
-    }
 
-    override fun onResults(bodyPose: BodyPose) {
+     fun onResults(bodyPose: BodyPose) {
         when (val result = process(bodyPose)) {
             is DetectionDetails -> listener?.onDetection(result)
             is NoVisibleArm -> {}

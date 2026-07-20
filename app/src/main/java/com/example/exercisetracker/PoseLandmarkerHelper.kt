@@ -26,21 +26,17 @@ class PoseLandmarkerHelper(
     var currentDelegate: Int = DELEGATE_CPU,
     var runningMode: RunningMode = RunningMode.LIVE_STREAM,
     val context: Context,
-    // this listener is only used when running in RunningMode.LIVE_STREAM
-    val poseLandmarkerHelperListener: LandmarkerListener? = null
 ) {
     private var poseLandmarker: PoseLandmarker? = null
-
-    init {
-        setupPoseLandmarker()
-    }
+    // this listener is only used when running in RunningMode.LIVE_STREAM
+    var poseLandmarkerListener: LandmarkerListener? = null
 
     fun clearPoseLandmarker() {
         poseLandmarker?.close()
         poseLandmarker = null
     }
 
-    // Return running status of PoseLandmarkerHelper
+    // Return running status of PoseLandmarker
     fun isClose(): Boolean {
         return poseLandmarker == null
     }
@@ -64,9 +60,9 @@ class PoseLandmarkerHelper(
 
         when (runningMode) {
             RunningMode.LIVE_STREAM -> {
-                if (poseLandmarkerHelperListener == null) {
+                if (poseLandmarkerListener == null) {
                     throw IllegalStateException(
-                        "poseLandmarkerHelperListener must be set when runningMode is LIVE_STREAM."
+                        "poseLandmarkerListener must be set when runningMode is LIVE_STREAM."
                     )
                 }
             }
@@ -92,7 +88,7 @@ class PoseLandmarkerHelper(
             poseLandmarker = PoseLandmarker.createFromOptions(context, options)
 
         } catch (e: IllegalStateException) {
-            poseLandmarkerHelperListener?.onError(
+            poseLandmarkerListener?.onError(
                 "Pose Landmarker failed to initialize. See error logs for " + "details"
             )
             Log.e(
@@ -100,7 +96,7 @@ class PoseLandmarkerHelper(
             )
         } catch (e: RuntimeException) {
             // This occurs if the model being used does not support GPU
-            poseLandmarkerHelperListener?.onError(
+            poseLandmarkerListener?.onError(
                 "Pose Landmarker failed to initialize. See error logs for " + "details", GPU_ERROR
             )
             Log.e(
@@ -110,7 +106,7 @@ class PoseLandmarkerHelper(
     }
 
 
-    // Convert the ImageProxy to MP Image and feed it to PoselandmakerHelper.
+    // Convert the ImageProxy to MP Image and feed it to Poselandmaker.
     fun detectLiveStream(
         imageProxy: ImageProxy, isFrontCamera: Boolean
     ) {
@@ -156,7 +152,7 @@ class PoseLandmarkerHelper(
         // be returned in returnLivestreamResult function
     }
 
-    // Return the landmark result to this PoseLandmarkerHelper's caller
+    // Return the landmark result to this PoseLandmarker's caller
     private fun returnLivestreamResult(
         result: PoseLandmarkerResult, input: MPImage
     ) {
@@ -168,21 +164,21 @@ class PoseLandmarkerHelper(
             ?.toBodyPose()
             ?: return
 
-        poseLandmarkerHelperListener?.onResults(
+        poseLandmarkerListener?.onResults(
             bodyPose
         )
     }
 
-    // Return errors thrown during detection to this PoseLandmarkerHelper's
+    // Return errors thrown during detection to this PoseLandmarker's
 // caller
     private fun returnLivestreamError(error: RuntimeException) {
-        poseLandmarkerHelperListener?.onError(
+        poseLandmarkerListener?.onError(
             error.message ?: "An unknown error has occurred"
         )
     }
 
     companion object {
-        const val TAG = "PoseLandmarkerHelper"
+        const val TAG = "PoseLandmarker"
 
         const val DELEGATE_CPU = 0
         const val DELEGATE_GPU = 1

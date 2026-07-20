@@ -1,5 +1,6 @@
 package com.example.exercisetracker.ui
 
+import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,6 +11,8 @@ import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
 import com.example.exercisetracker.exercise.DetectionDetails
 import com.example.exercisetracker.exercise.ExerciseDetector
+import com.example.exercisetracker.exercise.NoVisibleArm
+import com.example.exercisetracker.pose.BodyPose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -17,12 +20,12 @@ private const val TAG = "PoseViewModel"
 
 class PoseViewModel(
     val poseLandmarkerHelper: PoseLandmarkerHelper, val poseDetector: ExerciseDetector
-) : ViewModel(), PoseDetectionListener {
+) : ViewModel(), PoseLandmarkerHelper.LandmarkerListener, PoseDetectionListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
 
     init {
-        poseDetector.listener = this
+        poseLandmarkerHelper.poseLandmarkerListener = this
         poseLandmarkerHelper.setupPoseLandmarker()
     }
 
@@ -60,6 +63,19 @@ class PoseViewModel(
         }
     }
 
+    override fun onError(error: String, errorCode: Int) {
+        Log.d(TAG, "An error: $error with code $errorCode occurred")
+    }
+
+    override fun onResults(bodyPose: BodyPose) {
+        when (val result = poseDetector.process(bodyPose)) {
+            is DetectionDetails -> if (result.repCompleted) onRepDetected() else {
+            }
+
+            is NoVisibleArm -> {}
+        }
+    }
+
     override fun onDetection(result: DetectionDetails) {
         if (result.repCompleted) {
             onRepDetected()
@@ -70,10 +86,10 @@ class PoseViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ExerciseTrackerApplication)
-                val poseLandmarkerHelper = application.container.poseLandmarkerHelper
+                val poseLandmarker = application.container.poseLandmarkerHelper
                 val poseDetector = application.container.poseDetector
                 PoseViewModel(
-                    poseLandmarkerHelper = poseLandmarkerHelper, poseDetector = poseDetector
+                    poseLandmarkerHelper = poseLandmarker, poseDetector = poseDetector
                 )
             }
         }
