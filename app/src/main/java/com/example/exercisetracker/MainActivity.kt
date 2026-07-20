@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExerciseTrackerTheme {
-                Surface (modifier = Modifier.fillMaxSize()) {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     ExerciseTrackerApp(
 
                     )

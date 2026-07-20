@@ -1,6 +1,5 @@
 package com.example.exercisetracker.ui
 
-import android.util.Log
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -9,17 +8,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-
 private const val TAG = "PoseViewModel"
 
-
 class PoseViewModel(
-    val poseLandmarkerHelper: PoseLandmarkerHelper,
-    val poseDetector: PoseDetector
+    val poseLandmarkerHelper: PoseLandmarkerHelper, val poseDetector: PoseDetector
 ) : ViewModel(), PoseDetectionListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
@@ -43,7 +38,9 @@ class PoseViewModel(
 
     fun startWorkout() {
         _uiState.update {
-            it.copy(isRecording = true)
+            it.copy(
+                repCount = 0, isRecording = true
+            )
         }
     }
 
@@ -74,8 +71,7 @@ class PoseViewModel(
                 val poseLandmarkerHelper = application.container.poseLandmarkerHelper
                 val poseDetector = application.container.poseDetector
                 PoseViewModel(
-                    poseLandmarkerHelper = poseLandmarkerHelper,
-                    poseDetector = poseDetector
+                    poseLandmarkerHelper = poseLandmarkerHelper, poseDetector = poseDetector
                 )
             }
         }

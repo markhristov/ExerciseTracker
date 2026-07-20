@@ -172,7 +172,7 @@ private fun createPreviewView(context: Context) = PreviewView(context).apply {
 @Preview
 @Composable
 fun ExerciseScreenPreview() {
-    ExerciseTrackerTheme() {
+    ExerciseTrackerTheme {
         ExerciseScreen(
             PoseUiState(), {}, modifier = Modifier.fillMaxSize()
         )

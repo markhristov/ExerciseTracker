@@ -15,6 +15,7 @@ private const val UP_THRESHOLD = 160
 private const val DOWN_THRESHOLD = 90
 
 private const val VISIBILITY_THRESHOLD = 0.6
+
 class PoseDetector : LandmarkerListener {
     var listener: PoseDetectionListener? = null
     private var currentStage = Stage.UP
@@ -34,7 +35,7 @@ class PoseDetector : LandmarkerListener {
         val landmarks = result.landmarks().first()
         Log.i(TAG, landmarks.toString())
         val armJoints = landmarks.toArmJoints()
-        val arm = getBestVisibleArm(armJoints)  ?: return NoVisibleArm
+        val arm = getBestVisibleArm(armJoints) ?: return NoVisibleArm
         val elbowAngle = calculateElbowAngle(arm)
 
         val newStage = when {

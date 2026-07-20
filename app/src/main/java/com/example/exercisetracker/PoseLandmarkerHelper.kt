@@ -1,20 +1,19 @@
 package com.example.exercisetracker
 
-import android.adservices.ondevicepersonalization.InferenceInput.Params.DELEGATE_CPU
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.os.SystemClock
-import androidx.camera.core.ImageProxy
+import android.util.Log
 import androidx.annotation.VisibleForTesting
+import androidx.camera.core.ImageProxy
+import androidx.core.graphics.createBitmap
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
-import android.graphics.Matrix
-import android.util.Log
-import androidx.core.graphics.createBitmap
 
 
 class PoseLandmarkerHelper(

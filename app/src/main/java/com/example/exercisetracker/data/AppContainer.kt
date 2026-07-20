@@ -9,8 +9,10 @@ interface AppContainer {
     val poseDetector: PoseDetector
 }
 
-class DefaultAppContainer(context: Context,
+class DefaultAppContainer(
+    context: Context,
 ) : AppContainer {
     override val poseDetector: PoseDetector = PoseDetector()
-    override var poseLandmarkerHelper = PoseLandmarkerHelper(context = context, poseLandmarkerHelperListener = poseDetector)
+    override var poseLandmarkerHelper =
+        PoseLandmarkerHelper(context = context, poseLandmarkerHelperListener = poseDetector)
 }

@@ -1,6 +1,6 @@
 package com.example.exercisetracker.model
 
-import com.google.mediapipe.tasks.components.containers.NormalizedLandmark;
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 
 data class ArmsJoints(
     val leftShoulder: NormalizedLandmark,
