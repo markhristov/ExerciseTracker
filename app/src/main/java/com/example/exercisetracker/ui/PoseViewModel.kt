@@ -58,7 +58,7 @@ class PoseViewModel(
         }
     }
 
-    fun selectExercise(type: ExerciseType) {
+    fun changeExercise(type: ExerciseType) {
         _uiState.update {
             it.copy(
                 exerciseType = type,

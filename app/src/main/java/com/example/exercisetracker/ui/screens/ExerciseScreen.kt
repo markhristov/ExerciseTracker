@@ -11,12 +11,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,6 +36,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +46,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.exercisetracker.camera.CameraManager
+import com.example.exercisetracker.exercise.ExerciseType
 import com.example.exercisetracker.ui.PoseUiState
 import com.example.exercisetracker.ui.theme.ExerciseTrackerTheme
 
@@ -88,6 +99,7 @@ fun CameraPermissionGate(
 fun ExerciseScreen(
     uiState: PoseUiState,
     onButtonClick: () -> Unit,
+    onChangeExercise: (ExerciseType) -> Unit,
     modifier: Modifier = Modifier,
     onCameraFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() }
 ) {
@@ -106,12 +118,23 @@ fun ExerciseScreen(
                 )
             }
         }
+        Row(modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
 
-        Text(
-            text = "Reps: ${uiState.repCount}",
-            modifier = Modifier.padding(16.dp),
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = "Reps: ${uiState.repCount}",
+                modifier = Modifier.padding(top = 12.dp),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.size(16.dp))
+
+            ExerciseDropdown(
+                selected = uiState.exerciseType,
+                onSelected = { onChangeExercise(it) },
+                modifier = Modifier.align(Alignment.CenterVertically))
+        }
         Button(
             onClick = {
                 onButtonClick()
@@ -121,6 +144,57 @@ fun ExerciseScreen(
                 text = if (uiState.isRecording) "Stop" else "Start",
                 modifier = Modifier.padding(16.dp)
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExerciseDropdown(
+    selected: ExerciseType,
+    onSelected: (ExerciseType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {
+            expanded = !expanded
+        },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = selected.name.replace('_', ' '),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Exercise") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            }
+        ) {
+            ExerciseType.entries.forEach { exercise ->
+                DropdownMenuItem(
+                    text = {
+                        Text(exercise.name.replace('_', ' '))
+                    },
+                    onClick = {
+                        onSelected(exercise)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
         }
     }
 }
@@ -174,7 +248,7 @@ private fun createPreviewView(context: Context) = PreviewView(context).apply {
 fun ExerciseScreenPreview() {
     ExerciseTrackerTheme {
         ExerciseScreen(
-            PoseUiState(), {}, modifier = Modifier.fillMaxSize()
+            PoseUiState(), {}, {}, modifier = Modifier.fillMaxSize()
         )
     }
 }
