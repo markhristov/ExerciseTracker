@@ -8,22 +8,13 @@ import com.example.exercisetracker.exercise.PushUpDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import com.example.exercisetracker.pose.bestVisibleArm
 import com.example.exercisetracker.pose.calculateElbowAngle
-import com.example.exercisetracker.ui.PoseDetectionListener
 
 private const val TAG = "PoseDetector"
 private const val UP_THRESHOLD = 160
 private const val DOWN_THRESHOLD = 90
 
 class PushUpDetector : ExerciseDetector {
-    override var listener: PoseDetectionListener? = null
     private var currentState = PushUpState.UP
-
-     fun onResults(bodyPose: BodyPose) {
-        when (val result = process(bodyPose)) {
-            is PushUpDetectionResult -> listener?.onDetection(result)
-            else -> {}
-        }
-    }
 
     override fun process(bodyPose: BodyPose): DetectionResult {
         Log.i(TAG, bodyPose.toString())

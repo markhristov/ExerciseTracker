@@ -8,13 +8,12 @@ import com.example.exercisetracker.exercise.SquatDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import com.example.exercisetracker.pose.bestVisibleLeg
 import com.example.exercisetracker.pose.calculateAngle
-import com.example.exercisetracker.ui.PoseDetectionListener
 
 private const val TAG = "PoseDetector"
 private const val DOWN_THRESHOLD = 100.0
 private const val UP_THRESHOLD = 165.0
 
-class SquatDetector(override var listener: PoseDetectionListener?) : ExerciseDetector {
+class SquatDetector : ExerciseDetector {
 
     private var currentState = SquatState.UP
 

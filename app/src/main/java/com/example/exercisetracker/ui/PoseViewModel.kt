@@ -20,7 +20,7 @@ private const val TAG = "PoseViewModel"
 
 class PoseViewModel(
     val poseLandmarkerHelper: PoseLandmarkerHelper, val poseDetector: ExerciseDetector
-) : ViewModel(), PoseLandmarkerHelper.LandmarkerListener, PoseDetectionListener {
+) : ViewModel(), PoseLandmarkerHelper.LandmarkerListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
 
@@ -74,10 +74,6 @@ class PoseViewModel(
 
             else -> {}
         }
-    }
-
-    override fun onDetection(result: DetectionResult) {
-
     }
 
     companion object {
