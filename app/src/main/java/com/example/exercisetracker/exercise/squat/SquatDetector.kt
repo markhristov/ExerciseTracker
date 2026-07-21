@@ -10,8 +10,8 @@ import com.example.exercisetracker.pose.bestVisibleLeg
 import com.example.exercisetracker.pose.calculateAngle
 
 private const val TAG = "PoseDetector"
+private const val UP_THRESHOLD = 155.0
 private const val DOWN_THRESHOLD = 100.0
-private const val UP_THRESHOLD = 165.0
 
 class SquatDetector : ExerciseDetector {
 

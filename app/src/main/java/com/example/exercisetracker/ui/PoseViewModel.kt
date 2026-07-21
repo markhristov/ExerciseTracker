@@ -13,6 +13,7 @@ import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
 import com.example.exercisetracker.exercise.ExerciseType
 import com.example.exercisetracker.exercise.PushUpDetectionResult
+import com.example.exercisetracker.exercise.SquatDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -84,9 +85,8 @@ class PoseViewModel(
 
     override fun onResults(bodyPose: BodyPose) {
         when (val result = detector.process(bodyPose)) {
-            is PushUpDetectionResult -> if (result.repCompleted) onRepDetected() else {
-            }
-
+            is PushUpDetectionResult -> if (result.repCompleted) onRepDetected()
+            is SquatDetectionResult -> if (result.repCompleted) onRepDetected()
             else -> {}
         }
     }
