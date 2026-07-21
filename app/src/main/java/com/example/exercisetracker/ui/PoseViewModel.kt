@@ -9,11 +9,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
 import com.example.exercisetracker.PoseLandmarkerHelper
+import com.example.exercisetracker.exercise.DetectionMode
 import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
 import com.example.exercisetracker.exercise.ExerciseType
 import com.example.exercisetracker.exercise.PushUpDetectionResult
 import com.example.exercisetracker.exercise.SquatDetectionResult
+import com.example.exercisetracker.exercise.classifier.ExerciseClassifier
 import com.example.exercisetracker.pose.BodyPose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,7 +24,8 @@ private const val TAG = "PoseViewModel"
 
 class PoseViewModel(
     val poseLandmarkerHelper: PoseLandmarkerHelper,
-    val detectorFactory: ExerciseDetectorFactory
+    val detectorFactory: ExerciseDetectorFactory,
+    val exerciseClassifier: ExerciseClassifier
 ) : ViewModel(), PoseLandmarkerHelper.LandmarkerListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
@@ -35,6 +38,14 @@ class PoseViewModel(
 
     fun detectPoses(imageProxy: ImageProxy) {
         poseLandmarkerHelper.detectLiveStream(imageProxy, true)
+    }
+
+    fun changeDetectionMode(detectionMode: DetectionMode) {
+        _uiState.update {
+            it.copy(
+                detectionMode = detectionMode
+            )
+        }
     }
 
     fun toggleWorkout() {
@@ -59,9 +70,18 @@ class PoseViewModel(
         }
     }
 
+    private fun setDetector(type: ExerciseType) {
+        detector = detectorFactory.create(type)
+
+        _uiState.update {
+            it.copy(exerciseType = type)
+        }
+    }
+
     fun changeExercise(type: ExerciseType) {
         _uiState.update {
             it.copy(
+                detectionMode = DetectionMode.MANUAL,
                 exerciseType = type,
                 repCount = 0,
                 isRecording = false
@@ -84,6 +104,14 @@ class PoseViewModel(
     }
 
     override fun onResults(bodyPose: BodyPose) {
+        if (_uiState.value.detectionMode == DetectionMode.AUTOMATIC) {
+            val detectedExercise = exerciseClassifier.classify(bodyPose)
+
+            if (detectedExercise != _uiState.value.exerciseType) {
+                setDetector(detectedExercise)
+            }
+        }
+
         when (val result = detector.process(bodyPose)) {
             is PushUpDetectionResult -> if (result.repCompleted) onRepDetected()
             is SquatDetectionResult -> if (result.repCompleted) onRepDetected()
@@ -97,13 +125,14 @@ class PoseViewModel(
                 val application = (this[APPLICATION_KEY] as ExerciseTrackerApplication)
                 val poseLandmarker = application.container.poseLandmarkerHelper
                 val detectorFactory = application.container.detectorFactory
+                val exerciseClassifier = application.container.exerciseClassifier
                 PoseViewModel(
-                    poseLandmarkerHelper = poseLandmarker, detectorFactory = detectorFactory
+                    poseLandmarkerHelper = poseLandmarker, detectorFactory = detectorFactory,
+                    exerciseClassifier = exerciseClassifier
                 )
             }
         }
     }
-
 }
 
 

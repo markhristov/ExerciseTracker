@@ -36,7 +36,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +45,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.exercisetracker.camera.CameraManager
+import com.example.exercisetracker.exercise.DetectionMode
 import com.example.exercisetracker.exercise.ExerciseType
 import com.example.exercisetracker.ui.PoseUiState
 import com.example.exercisetracker.ui.theme.ExerciseTrackerTheme
@@ -100,8 +100,9 @@ fun ExerciseScreen(
     uiState: PoseUiState,
     onButtonClick: () -> Unit,
     onChangeExercise: (ExerciseType) -> Unit,
+    onDetectionModeChanged: (DetectionMode) -> Unit,
     modifier: Modifier = Modifier,
-    onCameraFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() }
+    onCameraFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() },
 ) {
 
     Column(
@@ -133,7 +134,9 @@ fun ExerciseScreen(
             ExerciseDropdown(
                 selected = uiState.exerciseType,
                 onSelected = { onChangeExercise(it) },
-                modifier = Modifier.align(Alignment.CenterVertically))
+                onDetectionModeChanged = onDetectionModeChanged,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
         }
         Button(
             onClick = {
@@ -153,7 +156,8 @@ fun ExerciseScreen(
 fun ExerciseDropdown(
     selected: ExerciseType,
     onSelected: (ExerciseType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDetectionModeChanged: (DetectionMode) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -183,6 +187,14 @@ fun ExerciseDropdown(
                 expanded = false
             }
         ) {
+            DropdownMenuItem(
+                text = { Text("Automatic") },
+                onClick = {
+                    expanded = false
+                    onDetectionModeChanged(DetectionMode.AUTOMATIC)
+                }
+            )
+
             ExerciseType.entries.forEach { exercise ->
                 DropdownMenuItem(
                     text = {
@@ -248,7 +260,7 @@ private fun createPreviewView(context: Context) = PreviewView(context).apply {
 fun ExerciseScreenPreview() {
     ExerciseTrackerTheme {
         ExerciseScreen(
-            PoseUiState(), {}, {}, modifier = Modifier.fillMaxSize()
+            PoseUiState(), {},{}, {}, modifier = Modifier.fillMaxSize(),
         )
     }
 }
