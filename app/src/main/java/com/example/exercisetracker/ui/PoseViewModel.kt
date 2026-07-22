@@ -13,8 +13,6 @@ import com.example.exercisetracker.exercise.DetectionMode
 import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
 import com.example.exercisetracker.exercise.ExerciseType
-import com.example.exercisetracker.exercise.result.PushUpDetectionResult
-import com.example.exercisetracker.exercise.result.SquatDetectionResult
 import com.example.exercisetracker.exercise.classifier.ExerciseClassifier
 import com.example.exercisetracker.exercise.result.RepDetectionResult
 import com.example.exercisetracker.pose.BodyPose

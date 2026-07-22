@@ -1,8 +1,8 @@
 package com.example.exercisetracker.exercise.squat
 
 import android.util.Log
-import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
+import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.result.NoVisibleBodyPart
 import com.example.exercisetracker.exercise.result.SquatDetectionResult
 import com.example.exercisetracker.pose.BodyPose

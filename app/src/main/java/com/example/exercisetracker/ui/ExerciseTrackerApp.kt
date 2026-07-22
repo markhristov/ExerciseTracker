@@ -24,9 +24,9 @@ fun ExerciseTrackerApp(
         ExerciseScreen(
             uiState = uiState.value,
             onButtonClick = { viewModel.toggleWorkout() },
-            onCameraFrame = {viewModel.detectPoses(it)},
-            onChangeExercise = {viewModel.changeExercise(it)},
-            onDetectionModeChanged = {viewModel.changeDetectionMode(it)},
+            onCameraFrame = { viewModel.detectPoses(it) },
+            onChangeExercise = { viewModel.changeExercise(it) },
+            onDetectionModeChanged = { viewModel.changeDetectionMode(it) },
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp),

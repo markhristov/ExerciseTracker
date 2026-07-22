@@ -1,8 +1,8 @@
 package com.example.exercisetracker.exercise.pushup
 
 import android.util.Log
-import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
+import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.result.NoVisibleBodyPart
 import com.example.exercisetracker.exercise.result.PushUpDetectionResult
 import com.example.exercisetracker.pose.BodyPose

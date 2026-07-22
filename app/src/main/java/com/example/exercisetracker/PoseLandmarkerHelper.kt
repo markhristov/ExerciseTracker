@@ -28,6 +28,7 @@ class PoseLandmarkerHelper(
     val context: Context,
 ) {
     private var poseLandmarker: PoseLandmarker? = null
+
     // this listener is only used when running in RunningMode.LIVE_STREAM
     var poseLandmarkerListener: LandmarkerListener? = null
 

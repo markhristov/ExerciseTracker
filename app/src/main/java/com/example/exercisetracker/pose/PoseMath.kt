@@ -1,11 +1,8 @@
 package com.example.exercisetracker.pose
 
-import android.util.Log
 import com.example.exercisetracker.model.Arm
 import com.example.exercisetracker.model.Leg
-import kotlin.math.abs
 import kotlin.math.acos
-import kotlin.math.atan2
 import kotlin.math.sqrt
 
 private const val TAG = "PoseMath"
@@ -50,6 +47,7 @@ fun calculateAngle(
 
     return Math.toDegrees(acos(cosTheta))
 }
+
 fun calculateElbowAngle(arm: Arm): Double {
     val shoulderX = arm.shoulder.x.toDouble()
     val shoulderY = arm.shoulder.y.toDouble()
