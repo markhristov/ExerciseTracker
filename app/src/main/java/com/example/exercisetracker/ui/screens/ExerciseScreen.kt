@@ -119,9 +119,11 @@ fun ExerciseScreen(
                 )
             }
         }
-        Row(modifier = Modifier.padding(8.dp),
+        Row(
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
             Text(
                 text = "Reps: ${uiState.repCount}",
@@ -133,6 +135,7 @@ fun ExerciseScreen(
 
             ExerciseDropdown(
                 selected = uiState.exerciseType,
+                detectionMode = uiState.detectionMode,
                 onSelected = { onChangeExercise(it) },
                 onDetectionModeChanged = onDetectionModeChanged,
                 modifier = Modifier.align(Alignment.CenterVertically),
@@ -155,12 +158,17 @@ fun ExerciseScreen(
 @Composable
 fun ExerciseDropdown(
     selected: ExerciseType,
+    detectionMode: DetectionMode,
     onSelected: (ExerciseType) -> Unit,
     modifier: Modifier = Modifier,
-    onDetectionModeChanged: (DetectionMode) -> Unit
+    onDetectionModeChanged: (DetectionMode) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-
+    val selectedValue = if (detectionMode == DetectionMode.AUTOMATIC) {
+        "Automatic"
+    } else {
+        selected.name.replace('_', ' ')
+    }
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = {
@@ -169,7 +177,7 @@ fun ExerciseDropdown(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = selected.name.replace('_', ' '),
+            value = selectedValue,
             onValueChange = {},
             readOnly = true,
             label = { Text("Exercise") },
@@ -260,7 +268,7 @@ private fun createPreviewView(context: Context) = PreviewView(context).apply {
 fun ExerciseScreenPreview() {
     ExerciseTrackerTheme {
         ExerciseScreen(
-            PoseUiState(), {},{}, {}, modifier = Modifier.fillMaxSize(),
+            PoseUiState(), {}, {}, {}, modifier = Modifier.fillMaxSize(),
         )
     }
 }
