@@ -1,6 +1,6 @@
 package com.example.exercisetracker.exercise
 
-enum class ExerciseType {
-    PUSH_UP,
-    SQUAT
+enum class ExerciseType(val displayName: String) {
+    PUSH_UP("Push-up"),
+    SQUAT("Squat")
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -118,6 +120,14 @@ fun ExerciseScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
+            if (uiState.detectionMode == DetectionMode.AUTOMATIC) {
+                AutomaticDetectionOverlay(
+                    detectedExercise = uiState.detectedExercise,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                )
+            }
         }
         Row(
             modifier = Modifier.padding(8.dp),
@@ -134,7 +144,7 @@ fun ExerciseScreen(
             Spacer(modifier = Modifier.size(16.dp))
 
             ExerciseDropdown(
-                selected = uiState.exerciseType,
+                selected = uiState.selectedExercise,
                 detectionMode = uiState.detectionMode,
                 onSelected = { onChangeExercise(it) },
                 onDetectionModeChanged = onDetectionModeChanged,
@@ -154,6 +164,30 @@ fun ExerciseScreen(
     }
 }
 
+@Composable
+fun AutomaticDetectionOverlay(
+    detectedExercise: ExerciseType?, modifier: Modifier = Modifier
+) {
+    val text = detectedExercise?.let {
+        "Detected: ${it.displayName}"
+    } ?: "Detecting..."
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(
+                horizontal = 20.dp,
+                vertical = 10.dp
+            ),
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDropdown(
@@ -167,7 +201,7 @@ fun ExerciseDropdown(
     val selectedValue = if (detectionMode == DetectionMode.AUTOMATIC) {
         "Automatic"
     } else {
-        selected.name.replace('_', ' ')
+        selected.displayName
     }
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -206,7 +240,7 @@ fun ExerciseDropdown(
             ExerciseType.entries.forEach { exercise ->
                 DropdownMenuItem(
                     text = {
-                        Text(exercise.name.replace('_', ' '))
+                        Text(exercise.displayName)
                     },
                     onClick = {
                         onSelected(exercise)

@@ -29,7 +29,7 @@ class PoseViewModel(
 ) : ViewModel(), PoseLandmarkerHelper.LandmarkerListener {
     private val _uiState = MutableStateFlow(PoseUiState())
     val uiState = _uiState
-    private var detector: ExerciseDetector = detectorFactory.create(_uiState.value.exerciseType)
+    private var detector: ExerciseDetector = detectorFactory.create(_uiState.value.selectedExercise)
 
     init {
         poseLandmarkerHelper.poseLandmarkerListener = this
@@ -70,11 +70,11 @@ class PoseViewModel(
         }
     }
 
-    private fun setDetector(type: ExerciseType) {
+    private fun setDetectedExercise(type: ExerciseType) {
         detector = detectorFactory.create(type)
 
         _uiState.update {
-            it.copy(exerciseType = type)
+            it.copy(detectedExercise = type)
         }
     }
 
@@ -82,7 +82,7 @@ class PoseViewModel(
         _uiState.update {
             it.copy(
                 detectionMode = DetectionMode.MANUAL,
-                exerciseType = type,
+                selectedExercise = type,
                 repCount = 0,
                 isRecording = false
             )
@@ -107,8 +107,8 @@ class PoseViewModel(
         if (_uiState.value.detectionMode == DetectionMode.AUTOMATIC) {
             val detectedExercise = exerciseClassifier.classify(bodyPose)
 
-            if (detectedExercise != _uiState.value.exerciseType) {
-                setDetector(detectedExercise)
+            if (detectedExercise != _uiState.value.detectedExercise) {
+                setDetectedExercise(detectedExercise)
             }
         }
 
