@@ -13,9 +13,10 @@ import com.example.exercisetracker.exercise.DetectionMode
 import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
 import com.example.exercisetracker.exercise.ExerciseType
-import com.example.exercisetracker.exercise.PushUpDetectionResult
-import com.example.exercisetracker.exercise.SquatDetectionResult
+import com.example.exercisetracker.exercise.result.PushUpDetectionResult
+import com.example.exercisetracker.exercise.result.SquatDetectionResult
 import com.example.exercisetracker.exercise.classifier.ExerciseClassifier
+import com.example.exercisetracker.exercise.result.RepDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -104,17 +105,18 @@ class PoseViewModel(
     }
 
     override fun onResults(bodyPose: BodyPose) {
-        if (_uiState.value.detectionMode == DetectionMode.AUTOMATIC) {
+        val state = _uiState.value
+
+        if (state.detectionMode == DetectionMode.AUTOMATIC) {
             val detectedExercise = exerciseClassifier.classify(bodyPose)
 
-            if (detectedExercise != _uiState.value.detectedExercise) {
+            if (detectedExercise != state.detectedExercise) {
                 setDetectedExercise(detectedExercise)
             }
         }
 
         when (val result = detector.process(bodyPose)) {
-            is PushUpDetectionResult -> if (result.repCompleted) onRepDetected()
-            is SquatDetectionResult -> if (result.repCompleted) onRepDetected()
+            is RepDetectionResult -> if (result.repCompleted) onRepDetected()
             else -> {}
         }
     }

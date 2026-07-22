@@ -1,10 +1,10 @@
 package com.example.exercisetracker.exercise.squat
 
 import android.util.Log
-import com.example.exercisetracker.exercise.DetectionResult
+import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.ExerciseDetector
-import com.example.exercisetracker.exercise.NoVisibleBodyPart
-import com.example.exercisetracker.exercise.SquatDetectionResult
+import com.example.exercisetracker.exercise.result.NoVisibleBodyPart
+import com.example.exercisetracker.exercise.result.SquatDetectionResult
 import com.example.exercisetracker.pose.BodyPose
 import com.example.exercisetracker.pose.bestVisibleLeg
 import com.example.exercisetracker.pose.calculateAngle
