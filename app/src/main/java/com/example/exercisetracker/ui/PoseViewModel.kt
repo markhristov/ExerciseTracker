@@ -61,6 +61,7 @@ class PoseViewModel(
                 repCount = 0, isRecording = true
             )
         }
+        detector.reset()
     }
 
     fun stopWorkout() {

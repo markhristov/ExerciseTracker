@@ -1,6 +1,5 @@
 package com.example.exercisetracker.exercise.squat
 
-import android.util.Log
 import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.result.DetectionResult
 import com.example.exercisetracker.exercise.result.NoVisibleBodyPart
@@ -9,7 +8,6 @@ import com.example.exercisetracker.pose.BodyPose
 import com.example.exercisetracker.pose.bestVisibleLeg
 import com.example.exercisetracker.pose.calculateAngle
 
-private const val TAG = "PoseDetector"
 private const val UP_THRESHOLD = 150.0
 private const val DOWN_THRESHOLD = 95.0
 
@@ -43,14 +41,15 @@ class SquatDetector : ExerciseDetector {
 
         currentState = newSquatState
 
-        Log.d(TAG, "Knee angle = $kneeAngle")
-        Log.d(TAG, "Stage = $newSquatState")
-
         return SquatDetectionResult(
             state = newSquatState,
             kneeAngle = kneeAngle,
             repCompleted = repCompleted
         )
+    }
+
+    override fun reset() {
+        currentState = SquatState.UP
     }
 }
 

@@ -7,4 +7,6 @@ interface ExerciseDetector {
     fun process(
         bodyPose: BodyPose
     ): DetectionResult
+
+    fun reset(): Unit
 }

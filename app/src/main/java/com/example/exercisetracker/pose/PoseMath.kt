@@ -5,9 +5,6 @@ import com.example.exercisetracker.model.Leg
 import kotlin.math.acos
 import kotlin.math.sqrt
 
-private const val TAG = "PoseMath"
-
-
 fun Leg.isStanding(): Boolean =
     calculateAngle(hip, knee, ankle) > 165
 

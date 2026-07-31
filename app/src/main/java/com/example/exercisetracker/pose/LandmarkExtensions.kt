@@ -17,15 +17,10 @@ fun List<NormalizedLandmark>.toBodyPose(): BodyPose {
         nose = this[0].toJoint(),
 
         leftShoulder = this[11].toJoint(), rightShoulder = this[12].toJoint(),
-
         leftElbow = this[13].toJoint(), rightElbow = this[14].toJoint(),
-
         leftWrist = this[15].toJoint(), rightWrist = this[16].toJoint(),
-
         leftHip = this[23].toJoint(), rightHip = this[24].toJoint(),
-
         leftKnee = this[25].toJoint(), rightKnee = this[26].toJoint(),
-
         leftAnkle = this[27].toJoint(), rightAnkle = this[28].toJoint()
     )
 }
@@ -34,11 +29,9 @@ fun List<NormalizedLandmark>.toBodyPose(): BodyPose {
 fun BodyPose.torsoAngle(): Double {
 
     val shoulderCenterX = (leftShoulder.x + rightShoulder.x) / 2f
-
     val shoulderCenterY = (leftShoulder.y + rightShoulder.y) / 2f
 
     val hipCenterX = (leftHip.x + rightHip.x) / 2f
-
     val hipCenterY = (leftHip.y + rightHip.y) / 2f
 
     val angle = Math.toDegrees(
