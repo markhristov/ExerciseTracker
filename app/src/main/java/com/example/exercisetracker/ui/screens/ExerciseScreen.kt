@@ -120,7 +120,7 @@ fun ExerciseScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            if (uiState.detectionMode == DetectionMode.AUTOMATIC) {
+            if (uiState.detectionMode == DetectionMode.AUTOMATIC && uiState.isRecording) {
                 AutomaticDetectionOverlay(
                     detectedExercise = uiState.detectedExercise,
                     modifier = Modifier
