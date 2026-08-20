@@ -25,6 +25,7 @@ class CameraManager(
         lifecycleOwner: LifecycleOwner,
         onFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() }
     ) {
+        stopCamera()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
         cameraProviderFuture.addListener(
@@ -50,8 +51,8 @@ class CameraManager(
                 try {
                     provider.unbindAll()
                     provider.bindToLifecycle(
-                        lifecycleOwner,
-                        CameraSelector.DEFAULT_FRONT_CAMERA,
+                        lifecycleOwner = lifecycleOwner,
+                        cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA,
                         preview,
                         imageAnalysis
                     )
@@ -66,6 +67,8 @@ class CameraManager(
 
     fun stopCamera() {
         cameraProvider?.unbindAll()
+        cameraProvider = null
+
         cameraExecutor?.shutdown()
         cameraExecutor = null
     }

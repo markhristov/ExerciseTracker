@@ -1,4 +1,4 @@
-package com.example.exercisetracker
+package com.example.exercisetracker.pose
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,15 +8,12 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.ImageProxy
 import androidx.core.graphics.createBitmap
-import com.example.exercisetracker.pose.BodyPose
-import com.example.exercisetracker.pose.toBodyPose
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
-
 
 class PoseLandmarkerHelper(
     var minPoseDetectionConfidence: Float = DEFAULT_POSE_DETECTION_CONFIDENCE,
@@ -157,9 +154,6 @@ class PoseLandmarkerHelper(
     private fun returnLivestreamResult(
         result: PoseLandmarkerResult, input: MPImage
     ) {
-        val finishTimeMs = SystemClock.uptimeMillis()
-        val inferenceTime = finishTimeMs - result.timestampMs()
-
         val bodyPose = result.landmarks()
             .firstOrNull()
             ?.toBodyPose()

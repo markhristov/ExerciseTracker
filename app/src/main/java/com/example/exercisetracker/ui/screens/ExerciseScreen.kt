@@ -68,7 +68,7 @@ fun CameraPermissionGate(
     }
 
     val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasPermission = granted
     }

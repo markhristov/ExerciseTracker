@@ -1,7 +1,7 @@
 package com.example.exercisetracker.data
 
 import android.content.Context
-import com.example.exercisetracker.PoseLandmarkerHelper
+import com.example.exercisetracker.pose.PoseLandmarkerHelper
 import com.example.exercisetracker.exercise.DefaultExerciseDetectorFactory
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
 import com.example.exercisetracker.exercise.classifier.DefaultExerciseClassifier

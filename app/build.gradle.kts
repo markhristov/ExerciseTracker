@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.exercisetracker"
+        applicationId = "com.sperux.playground.exercisetracker"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

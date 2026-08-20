@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.exercisetracker.ExerciseTrackerApplication
-import com.example.exercisetracker.PoseLandmarkerHelper
+import com.example.exercisetracker.pose.PoseLandmarkerHelper
 import com.example.exercisetracker.exercise.DetectionMode
 import com.example.exercisetracker.exercise.ExerciseDetector
 import com.example.exercisetracker.exercise.ExerciseDetectorFactory
@@ -33,6 +33,11 @@ class PoseViewModel(
     init {
         poseLandmarkerHelper.poseLandmarkerListener = this
         poseLandmarkerHelper.setupPoseLandmarker()
+    }
+
+    override fun onCleared() {
+        poseLandmarkerHelper.poseLandmarkerListener = null
+        poseLandmarkerHelper.clearPoseLandmarker()
     }
 
     fun detectPoses(imageProxy: ImageProxy) {
@@ -104,6 +109,10 @@ class PoseViewModel(
     }
 
     override fun onResults(bodyPose: BodyPose) {
+        if (!_uiState.value.isRecording) {
+            return
+        }
+
         val state = _uiState.value
 
         if (state.detectionMode == DetectionMode.AUTOMATIC) {

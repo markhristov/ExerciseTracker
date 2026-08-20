@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.exercisetracker.ui.screens.ExerciseScreen
 
@@ -16,14 +17,14 @@ import com.example.exercisetracker.ui.screens.ExerciseScreen
 fun ExerciseTrackerApp(
     viewModel: PoseViewModel = viewModel(factory = PoseViewModel.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(topBar = {
         AppBar()
     }) { paddingValues ->
 
         ExerciseScreen(
             uiState = uiState.value,
-            onButtonClick = { viewModel.toggleWorkout() },
+            onButtonClick = viewModel::toggleWorkout,
             onCameraFrame = { viewModel.detectPoses(it) },
             onChangeExercise = { viewModel.changeExercise(it) },
             onDetectionModeChanged = { viewModel.changeDetectionMode(it) },
