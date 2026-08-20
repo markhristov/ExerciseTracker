@@ -13,12 +13,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 class CameraManager(
     private val context: Context
 ) {
     private var cameraProvider: ProcessCameraProvider? = null
     private var cameraExecutor: ExecutorService? = null
+    private var startupGeneration = 0L
 
     fun startCamera(
         previewView: PreviewView,
@@ -26,25 +28,46 @@ class CameraManager(
         onFrame: (ImageProxy) -> Unit = { imageProxy -> imageProxy.close() }
     ) {
         stopCamera()
+
+        val generation = startupGeneration
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
         cameraProviderFuture.addListener(
             {
-                val provider = cameraProviderFuture.get()
+
+                val provider = try {
+                    cameraProviderFuture.get()
+                } catch (exception: Exception) {
+                    Log.e(TAG, "Getting camera provider failed", exception)
+                    return@addListener
+                }
+
                 cameraProvider = provider
 
+                val resolutionSelector = ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(
+                        AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY
+                    )
+                    .build()
+
                 val preview = Preview.Builder()
-                    .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                    .setResolutionSelector(resolutionSelector)
                     .build()
                     .also { it.surfaceProvider = previewView.surfaceProvider }
 
                 val imageAnalysis = ImageAnalysis.Builder()
-                    .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                    .setResolutionSelector(resolutionSelector)
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                     .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                     .build()
 
                 val executor = Executors.newSingleThreadExecutor()
+
+                if (generation != startupGeneration) {
+                    executor.shutdown()
+                    return@addListener
+                }
+
                 cameraExecutor = executor
                 imageAnalysis.setAnalyzer(executor, onFrame)
 
@@ -66,6 +89,8 @@ class CameraManager(
     }
 
     fun stopCamera() {
+        startupGeneration++
+
         cameraProvider?.unbindAll()
         cameraProvider = null
 
